@@ -12,7 +12,7 @@ class Server {
     private port: string;
 
     private apiPaths = {
-        products: 'api/products'
+        products: '/api/products'
     }
 
     constructor() {

@@ -27,6 +27,18 @@ class Server {
         this.middlewares();
         this.routes();
     }
+    dbConnection() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield connection_1.default.authenticate();
+                console.log('DB Online');
+                return;
+            }
+            catch (error) {
+                console.log(error);
+            }
+        });
+    }
     listen() {
         this.app.listen(this.port, () => {
             console.log('Servidor corriendo en el puerto' + this.port);
@@ -39,17 +51,6 @@ class Server {
     }
     routes() {
         this.app.use(this.apiPaths.products, products_1.default);
-    }
-    dbConnection() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                yield connection_1.default.authenticate();
-                console.log('DB Online');
-            }
-            catch (error) {
-                console.log(error);
-            }
-        });
     }
 }
 exports.default = Server;
