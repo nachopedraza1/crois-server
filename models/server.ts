@@ -3,6 +3,9 @@ import cors from 'cors';
 
 import productsRoutes from "../routes/products";
 import db from "../database/connection";
+import Usuario from "./usuario";
+import Orden from "./order";
+import Producto from "./product";
 
 
 
@@ -29,6 +32,17 @@ class Server {
         try {
             await db.authenticate();
             console.log('DB Online');
+
+            Usuario.hasMany(Orden);
+            Orden.belongsTo(Usuario);
+
+            Orden.belongsToMany(Producto, { through: 'OrdenProducto' });
+            Producto.belongsToMany(Orden, { through: 'OrdenProducto' });
+
+            /* (async () => {
+                await db.sync({ force: true });
+                console.log('Modelos sincronizados con la base de datos');
+            })(); */
             return
         } catch (error) {
             console.log(error);

@@ -1,15 +1,11 @@
-import { DataTypes } from 'sequelize';
-import db from '../database/connection';
+import { DataTypes } from "sequelize";
+import db from "../database/connection";
 
-const Product = db.define('Product', {
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    price: {
-        type: DataTypes.NUMBER,
-        allowNull: false,
-    },
-})
+const Producto = db.define('Producto', {
+    nombre: DataTypes.STRING,
+    precio: DataTypes.FLOAT,
+    // Otras propiedades del producto
+});
 
-export default Product;
+
+export default Producto;
