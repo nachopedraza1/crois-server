@@ -1,6 +1,4 @@
-import { Request, Response } from "express"
-import Orden from "../models/order";
-import Producto from "../models/product";
+import { Request, Response } from "express";
 
 
 export const getProducts = (_req: Request, res: Response) => {
@@ -11,24 +9,24 @@ export const getProducts = (_req: Request, res: Response) => {
 export const createProduct = async (_req: Request, res: Response) => {
 
 
-    // ID del usuario que realiza la orden
-    const productos = [
-        { id: 1, OrdenProducto: { cantidad: 3 } },
-        { id: 2, OrdenProducto: { cantidad: 2 } },
-        // Agrega más productos y cantidades según sea necesario
-    ];
+    await Product.create({ name: 'Producto1', price: 10 });
+    await Product.create({ name: 'Producto2', price: 20 });
+    await Product.create({ name: 'Producto3', price: 30 });
+    // Supongamos que tienes un usuario y productos ya definidos en tu base de datos
+    const userId = 2; // ID del usuario
+    const productIds = [1, 2]; // IDs de los productos que quieres agregar a la orden
+    const quantities = [2, 3]; // Cantidad de cada producto en la orden
 
-    Orden.create(
-        {
-            fecha: new Date(), // Fecha de la orden (ajusta según sea necesario)
-            UsuarioId: 1, // Asocia la orden con el usuario
-            Productos: productos, // Asocia los productos con la orden y establece las cantidades
-        },
-        {
-            include: Producto, // Incluye la relación Producto
-        }
-    );
+    // Crear una instancia de Orden
+    const ordes = await Order.create({ userId });
 
+    // Agregar productos a la orden con sus cantidades
+    for (let i = 0; i < productIds.length; i++) {
+        const productId = productIds[i];
+        const quantity = quantities[i];
+
+        await OrderProduct.create({ orderId: ordes.id, productId, quantity });
+    }
     return res.status(200).json({
         /*      product1,
              product2 */

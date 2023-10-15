@@ -2,11 +2,7 @@ import express, { Application } from "express";
 import cors from 'cors';
 
 import productsRoutes from "../routes/products";
-import db from "../database/connection";
-import Usuario from "./usuario";
-import Orden from "./order";
-import Producto from "./product";
-
+import sequelize from "../database/connection";
 
 
 class Server {
@@ -30,19 +26,14 @@ class Server {
     async dbConnection() {
 
         try {
-            await db.authenticate();
+            await sequelize.authenticate();
             console.log('DB Online');
 
-            Usuario.hasMany(Orden);
-            Orden.belongsTo(Usuario);
+            /*   (async () => {
+                  await sequelize.sync({ force: true });
+                  console.log('Modelos sincronizados con la base de datos');
+              })(); */
 
-            Orden.belongsToMany(Producto, { through: 'OrdenProducto' });
-            Producto.belongsToMany(Orden, { through: 'OrdenProducto' });
-
-            /* (async () => {
-                await db.sync({ force: true });
-                console.log('Modelos sincronizados con la base de datos');
-            })(); */
             return
         } catch (error) {
             console.log(error);
