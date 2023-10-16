@@ -1,39 +1,30 @@
-import { DataTypes, Model } from 'sequelize';
 import sequelize from "../database/connection";
-import order from "./orders";
+import { DataTypes, Model } from 'sequelize';
 
-interface User {
-    user_firstname: string;
-    user_lastname: string;
-    user_email: string;
-    user_password: string;
+class User extends Model {
+    public id!: number;
+    public name!: string;
+
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
 }
 
-interface UserModel extends Model<User>, User { }
-
-const user = sequelize.define<UserModel>('user', {
-    user_firstname: {
-        type: DataTypes.STRING,
-        allowNull: false,
+User.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
     },
-    user_lastname: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    user_email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    user_password: {
-        type: DataTypes.STRING,
-        allowNull: false,
+    {
+        sequelize,
+        modelName: 'User',
     }
-});
+);
 
-user.hasMany(order);
-order.belongsTo(user, {
-    as: 'dudd'
-});
-
-export default user;
+export default User;

@@ -1,17 +1,41 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../database/connection";
 
-interface OrderItem {
-    quantity: number;
-    orderId?: number;
-    productId?: number;
+
+class OrderProduct extends Model {
+    public id!: number;
+    public orderId!: number;
+    public productId!: number;
+    public quantity!: number;
+
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
 }
 
-const orderItems = sequelize.define<Model<OrderItem>>('orderItems', {
-    quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+OrderProduct.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        orderId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        productId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        quantity: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+    },
+    {
+        sequelize,
+        modelName: 'OrderProduct',
     }
-});
+);
 
-export default orderItems;
+export default OrderProduct;

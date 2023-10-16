@@ -29,10 +29,10 @@ class Server {
             await sequelize.authenticate();
             console.log('DB Online');
 
-            /*   (async () => {
-                  await sequelize.sync({ force: true });
-                  console.log('Modelos sincronizados con la base de datos');
-              })(); */
+            /* (async () => {
+                await sequelize.sync({ force: true });
+                console.log('Modelos sincronizados con la base de datos');
+            })(); */
 
             return
         } catch (error) {
