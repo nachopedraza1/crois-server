@@ -10,14 +10,9 @@ export const getProducts = (_req: Request, res: Response) => {
 
 export const createProduct = async (_req: Request, res: Response) => {
 
-
-
-    // Crear una orden
-    const order = await Order.create({ userId: 1 });
-
-    // Crear registros en la tabla intermedia (OrderProduct)
-    await OrderProduct.create({ orderId: order.id, productId: 1, quantity: 4 });
-    await OrderProduct.create({ orderId: order.id, productId: 1, quantity: 4 });
+    const newOrder = await Order.create({ userId: 1 });
+    await OrderProduct.create({ orderId: newOrder.id, productId: 2, quantity: 3 });
+    await OrderProduct.create({ orderId: newOrder.id, productId: 1, quantity: 2 })
 
     return res.status(200).json({
         /*      product1,
@@ -25,12 +20,15 @@ export const createProduct = async (_req: Request, res: Response) => {
     })
 }
 
-/*   // Crear un usuario
-  const user = await User.create({ name: 'Usuario Ejemplo' });
-
-  // Crear productos
-  const product1 = await Product.create({ name: 'Producto 1', price: 10 });
-  const product2 = await Product.create({ name: 'Producto 2', price: 20 });
+/*   // Crear un usuarios y productos
+  await User.create({ name: 'Usuario1' });
+    await User.create({ name: 'Usuario2' });
+    await User.create({ name: 'Usuario3' });
+    await User.create({ name: 'Usuario4' });
+    await Product.create({ name: 'Producto 1', price: 10 });
+    await Product.create({ name: 'Producto 2', price: 20 });
+    await Product.create({ name: 'Producto 3', price: 30 });
+    await Product.create({ name: 'Producto 4', price: 40 });
 
   // Crear una orden
   const order = await Order.create({ userId: user.id });
