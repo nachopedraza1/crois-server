@@ -1,29 +1,47 @@
+import { DataTypes, Model } from "sequelize";
 import sequelize from "../database/connection";
-import { DataTypes, Model } from 'sequelize';
 
-class User extends Model {
+interface UserAttributes {
+    id?: number;
+    name: string;
+    email: string;
+    password: string;
+}
+
+class User extends Model<UserAttributes> {
     public id!: number;
     public name!: string;
+    public email!: string;
+    public password!: string;
 
     public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+    public readonly upadtedAt!: Date;
 }
 
 User.init(
     {
         id: {
             type: DataTypes.INTEGER,
-            autoIncrement: true,
             primaryKey: true,
+            allowNull: false,
         },
         name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        }
     },
     {
         sequelize,
-        modelName: 'User',
+        modelName: 'Users',
+        tableName: 'Users',
     }
 );
 

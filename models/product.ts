@@ -1,34 +1,42 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from "../database/connection";
+import { DataTypes, Model } from "sequelize";
+import sequelize from '../database/connection';
 
-class Product extends Model {
+
+interface ProductsAttributes {
+    id?: number;
+    name: string;
+    price: number;
+}
+
+class Product extends Model<ProductsAttributes> {
     public id!: number;
     public name!: string;
     public price!: number;
 
     public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+    public readonly upadtedAt!: Date;
 }
 
 Product.init(
     {
         id: {
             type: DataTypes.INTEGER,
-            autoIncrement: true,
             primaryKey: true,
+            allowNull: false,
         },
         name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
         price: {
-            type: DataTypes.FLOAT,
+            type: DataTypes.INTEGER,
             allowNull: false,
-        },
+        }
     },
     {
         sequelize,
-        modelName: 'Product',
+        modelName: 'Products',
+        tableName: 'Products'
     }
 );
 

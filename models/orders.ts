@@ -1,22 +1,26 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from '../database/connection'; // Asegúrate de importar tu instancia Sequelize
-import Product from './product';
-import User from './user';
+import { DataTypes, Model } from "sequelize";
+import sequelize from '../database/connection';
+import User from "./user";
+import Product from "./product";
 
-class Order extends Model {
+interface OrdersAttributes {
+    id?: number;
+    userId: number;
+}
+
+class Order extends Model<OrdersAttributes> {
     public id!: number;
     public userId!: number;
-
     public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+    public readonly upadtedAt!: Date;
 }
 
 Order.init(
     {
         id: {
             type: DataTypes.INTEGER,
-            autoIncrement: true,
             primaryKey: true,
+            allowNull: false,
         },
         userId: {
             type: DataTypes.INTEGER,
@@ -25,18 +29,18 @@ Order.init(
     },
     {
         sequelize,
-        modelName: 'Order',
+        modelName: 'Orders',
+        tableName: 'Orders'
     }
 );
 
-// Definir la relación entre Orden y Usuario
 Order.belongsTo(User, { foreignKey: 'userId' });
 
-// Definir la relación entre Orden y Producto (muchos a muchos con cantidad)
 Order.belongsToMany(Product, {
-    through: 'OrderProduct',
+    through: 'OrderProducts',
     foreignKey: 'orderId',
     otherKey: 'productId',
 });
+
 
 export default Order;

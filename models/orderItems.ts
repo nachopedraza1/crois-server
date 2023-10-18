@@ -1,40 +1,36 @@
 import { DataTypes, Model } from "sequelize";
-import sequelize from "../database/connection";
+import sequelize from '../database/connection';
 
 
-class OrderProduct extends Model {
+interface OrderProductAttributes {
+    id?: number;
+    quantity: number;
+}
+
+class OrderProduct extends Model<OrderProductAttributes>{
     public id!: number;
-    public orderId!: number;
-    public productId!: number;
     public quantity!: number;
 
     public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+    public readonly upadtedAt!: Date;
 }
 
 OrderProduct.init(
     {
         id: {
             type: DataTypes.INTEGER,
-            autoIncrement: true,
             primaryKey: true,
-        },
-        orderId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        productId: {
-            type: DataTypes.INTEGER,
             allowNull: false,
         },
         quantity: {
             type: DataTypes.INTEGER,
             allowNull: false,
-        },
+        }
     },
     {
         sequelize,
-        modelName: 'OrderProduct',
+        modelName: 'OrdersProducts',
+        tableName: 'OrdersProducts'
     }
 );
 
