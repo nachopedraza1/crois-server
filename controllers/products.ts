@@ -9,9 +9,7 @@ export const getProducts = async (req: Request, res: Response) => {
 
   if (!userId) return res.status(400).json({ message: 'No hay usuario' });
 
-
   try {
-
     const orders = await Order.findAll({
       where: { userId },
       include: [
@@ -45,8 +43,10 @@ export const getProducts = async (req: Request, res: Response) => {
     console.log(error);
     return res.status(400).json({ message: 'Algo salio mal, revisar logs del servidor.' });
   }
-
 }
+
+
+
 
 export const createProduct = async (req: Request, res: Response) => {
 
