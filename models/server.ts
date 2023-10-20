@@ -2,6 +2,8 @@ import express, { Application } from "express";
 import cors from 'cors';
 
 import productsRoutes from "../routes/products";
+import ordersRoutes from "../routes/orders";
+
 import sequelize from "../database/connection";
 
 
@@ -11,7 +13,8 @@ class Server {
     private port: string;
 
     private apiPaths = {
-        products: '/api/products'
+        products: '/api/products',
+        orders: '/api/orders'
     }
 
     constructor() {
@@ -54,7 +57,8 @@ class Server {
     }
 
     routes() {
-        this.app.use(this.apiPaths.products, productsRoutes)
+        this.app.use(this.apiPaths.products, productsRoutes);
+        this.app.use(this.apiPaths.orders, ordersRoutes)
     }
 
 }

@@ -1,87 +1,77 @@
+import axios from "axios";
 import { Request, Response } from "express";
-import Order from "../models/orders";
-import OrderProduct from "../models/orderItems";
+import { MeliResponse } from "../interfaces/mercadoLibre";
+
 import Product from "../models/product";
-
-export const getProducts = async (req: Request, res: Response) => {
-
-  const { userId } = req.body;
-
-  if (!userId) return res.status(400).json({ message: 'No hay usuario' });
+import Rating from "../models/ratings";
+import Installments from "../models/installments";
 
 
-  try {
+export const getProducts = async (_req: Request, res: Response) => {
 
-    const orders = await Order.findAll({
-      where: { userId },
-      include: [
-        {
-          model: Product,
-          through: { attributes: ['quantity'] }
-        }
-      ]
-    });
+  const products = await Product.findAll({
+    limit: 10,
+    include: [
+      { model: Rating },
+      { model: Installments }
+    ]
+  })
 
-    if (orders.length === 0) return res.status(400).json({ message: 'No hay ordenes.' });
 
-    const formattedOrders = orders.map(order => ({
-      id: order.id,
-      userId: order.userId,
-      createdAt: order.createdAt,
-      updatedAt: order.updatedAt,
-      Products: order.Products!.map(product => ({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt,
-        quantity: product.OrderProducts.dataValues.quantity
-      })),
-    }));
-
-    return res.status(200).json(formattedOrders);
-
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({ message: 'Algo salio mal, revisar logs del servidor.' });
-  }
-
+  return res.status(200).json({ products });
 }
 
-export const createProduct = async (req: Request, res: Response) => {
+export const createProduct = async (_req: Request, res: Response) => {
 
-  const { userId, products } = req.body
+  const { data } = await axios.get<MeliResponse>('https://api.mercadolibre.com/sites/MLA/search?q=fundas iphone ringke&limit=30');
 
-  if (!userId) return res.status(400).json({ message: 'No hay usuario' });
-  if (!products) return res.status(400).json({ message: 'No hay productos en el carrito' });
+  const products = data.results.map(product => ({
+    meli_id: product.id,
+    name: product.title,
+    price: product.price,
+    condition: product.condition,
+    thumbnail: product.thumbnail,
+    thumbnail_id: product.thumbnail_id,
+    totalSold: product.seller.seller_reputation.transactions.completed,
+    brand: product.attributes.find(att => att.id === 'BRAND')?.value_name || '',
+    category: 'fundas',
+    ratings: product.seller.seller_reputation.transactions.ratings,
+    installments: product.installments,
+  }));
 
-  try {
-    const newOrder = await Order.create({ userId });
+  for (const product of products) {
+    try {
 
-    for (const product of products) {
-      await OrderProduct.create({
-        orderId: newOrder.id,
-        quantity: product.quantity,
-        productId: product.id
-      });
+      const exist = await Product.findOne({ where: { name: product.name } })
+
+      if (exist) {
+        console.log('El producto ya existe');
+      }
+
+      if (!exist) {
+
+        const newProduct = await Product.create({ ...product })
+        await Rating.create({
+          productId: newProduct.id,
+          negative: product.ratings.negative,
+          neutral: product.ratings.neutral,
+          positive: product.ratings.positive
+        });
+        await Installments.create({
+          productId: newProduct.id,
+          amount: product.installments.amount,
+          quantity: product.installments.quantity,
+          rate: product.installments.rate,
+        })
+        console.log('Producto creado con éxito.');
+      }
+
+    } catch (error) {
+      console.log(error);
+      return;
     }
-
-
-    return res.status(200).json({ message: 'Orden creada con éxito.' });
-
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({ message: 'La creación de la orden falló.' });
   }
+
+  return res.status(200).json({ products });
+
 }
-
-
-
-/*await User.create({ name: 'Juan ignacio pedraza', email: 'nachopedraza123@google.com', password: '123456' });
-  await User.create({ name: 'Edu Castro', email: 'educastro@google.com', password: '123456' });
-  await User.create({ name: 'Carola loca', email: 'carolaloca@google.com', password: '123456' });
-
-  await Product.create({ name: 'notebook', price: 450 });
-  await Product.create({ name: 'monitor', price: 230 });
-  await Product.create({ name: 'mouse', price: 340 });
-  await Product.create({ name: 'teclado', price: 150 }); */
