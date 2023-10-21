@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Order from "../models/orders";
-import OrderProduct from "../models/orderItems";
 import Product from "../models/product";
+import axios from "axios";
 
 export const getProducts = async (req: Request, res: Response) => {
 
@@ -48,9 +48,11 @@ export const getProducts = async (req: Request, res: Response) => {
 
 
 
-export const createProduct = async (req: Request, res: Response) => {
+export const createProduct = async (_req: Request, res: Response) => {
 
-  const { userId, products } = req.body
+  const { data } = await axios.get('https://api.mercadolibre.com/sites/MLA/search?q=fundas iphone ringke&limit=10')
+
+  /* const { userId, products } = req.body
 
   if (!userId) return res.status(400).json({ message: 'No hay usuario' });
   if (!products) return res.status(400).json({ message: 'No hay productos en el carrito' });
@@ -72,7 +74,9 @@ export const createProduct = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: 'La creación de la orden falló.' });
-  }
+  } */
+
+  return res.status(200).json({ data });
 }
 
 
